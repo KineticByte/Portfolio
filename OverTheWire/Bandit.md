@@ -71,7 +71,9 @@ The password for the next level is stored somewhere on the server and has all of
 
 This one isn't going to be as simple as just looking for files of size 33 bytes. We're gonna need to look for files owned by bandit7 and group bandit6. How? 
 We can use `find -user {uname}` to find all files owned by the user "uname". we can use `-group {gname}` to do the same for groups. 
-Putting it all together we get `$find -user bandit7 -group bandit6 -size 33c`, upon which we can look through the results and get /var/lib/dpkg/info/bandit7.password
+Putting it all together we get `$find / -user bandit7 -group bandit6 -size 33c`, upon which we can look through the results and get /var/lib/dpkg/info/bandit7.password
+To get rid of the "permission denied" errors when attempting to read files that we do not have permission for, we can append `2>/dev/null` to pipe errors to null, i.e. just getting rid of them.
+`$find / -user bandit7 -group bandit6 -size 33c 2>/dev/null`
 Cat-ing this file, we get the password for bandit7: morbNTDkSW6jIlUc0ymOdMaLnOlFVAaj
 
 # Level 8
