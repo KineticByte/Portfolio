@@ -119,7 +119,67 @@ Either way, running the tr command with the required parameters, we get the pass
 # Level 13
 The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed. 
 
+After creating a temp folder using mktemp -d and copying the file across, we need to start decompressing the file.
+Since it's a hexdump of a file that's been repeatedly compressed, we can use xxd to revert, using the -r flag.
+`xxd -r data.txt > data1.txt` (the `> data1.txt` pipes the output to a file, so we can operate on the file with other commands).
 
+From here, we still have an unusable sequence of odd symbols. Interestingly, if we use the `file` command here on our new hexdump reverted file, data1.txt, it tells us that the data is "gzip compressed data".
+The manual page for gzip gives us a hint to our direction. Unfortunately, gzip -d and gunzip both produce errors, but `zcat` works without a problem.
+`zcat data1.txt > data2.txt`
+`file data2.txt` = bzip2 compressed data. The manual page states that bzcat decompresses the file to standard output.
+
+`bzcat data2.txt > data3.txt`
+`file data3.txt` = gzip compressed data again.
+
+`zcat data3.txt > data4.txt`
+`file data4.txt` = POSIX Tar Archive (GNU)
+
+`man tar` = we can extract with the `-x` flag. 
+Tar extracting works a little differently to the others - rather than passing a file as the argument, `tar -x` extracts from standard output. So the command we use is a little different.
+`cat data4.txt | tar -x`
+This extracts the contents of the standard output to a new file, data5.bin, which is also another POSIX Tar Archive.
+Running the same command on this new file gives us another file, data6.bin.
+
+`file data6.bin` = bzip2 compressed data.
+`bzcat data6.bin > data7.txt` (I prefer to use .txt as the extension for my working files where possible, even if not necessary). 
+
+`file data7.txt` = POSIX Tar Archive
+`cat data7.txt | tar -x`
+
+`file data8.bin` = gzip compressed data.
+
+`zcat data8.bin > data9.txt`.
+`file data9.txt` = ASCII text
+Finally, if we cat this file, we get the password to bandit13: FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn
+
+# Level 14
+The password for the next level is stored in /etc/bandit_pass/bandit14 and can only be read by user bandit14. For this level, you don’t get the next password, but you get a private SSH key that can be used to log into the next level. Note: localhost is a hostname that refers to the machine you are working on
+
+This level sounds tricky/confusing to anyone who hasn't worked with SSH much before, but it's really quite straightforward once you have. Instead of a password, you can use an SSH private key. Simply specify the key with the -i flag, and avoid needing to enter a password. 
+`ssh -i sshkey.private bandit14@localhost -p 2220`
+From here, we can run `cat /etc/bandit_pass/bandit14` to get the password for bandit14: MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS
+
+# Level 15
+The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost.
+
+This level gets us to use Netcat - a "Swiss army knife" for networking - sending packets to servers or setting up listeners for incoming connections.
+The syntax for a standard forward connection with nc is `nc {Hostname} {Destination Port}`
+In our case, `nc localhost 30000`.
+Upon running the command, we don't get an output - that's normal; it's just waiting for us to specify what we want it to send.
+We can just copy and paste in the password for bandit14 (MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS)
+and it gives us a little message to let us know that what we did was correct, along with the password for bandit15: 8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo
+
+# Level 16
+The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL/TLS encryption.
+Helpful note: Getting “DONE”, “RENEGOTIATING” or “KEYUPDATE”? Read the “CONNECTED COMMANDS” section in the manpage.
+
+For this level, we need to send the password to localhost:30001 in much the same way as we did in the previous level using netcat, only this time it needs to be encrypted. 
+Luckily for us, openssl can perform that function for us.
+`openssl s_client -crlf -connect localhost:30001`
+Unlike telnet, the above actually creates a lot of output, as it handles the initial RSA (Asymmetric) handshake to establish the shared private key required for the AES (Symmetric) encryption that is setup afterwards.
+After this is done, pasting the password for bandit15 in gets us another little affirmative message and the password for bandit16: kSkvUpMQ7lBYyCM4GBPvCvT1BfWRy0Dx
+
+# Level 17. 
 
 
 
