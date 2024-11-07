@@ -18,5 +18,26 @@ Free online tool for checking SSL security strength for websites. Recommended to
 
 ## Passwords
 
+### Untroubled
+https://untroubled.org/pwgen/pwgen.cgi
+Free online secure password generator. Options to change generation requirements, and also supports passphrases.
+All data is stored within the session, within the users browser - not on the server. 
+
+## Forensics
+
+### VirusTotal
+https://www.virustotal.com/gui/
+Community driven analysis tool for suspicious files, domains, IPs and URLs to detect malware and other breaches.
 
 
+## Penetration Testing
+
+### Hacktricks
+https://book.hacktricks.xyz/
+Comprehensive wiki detailing penetration testing methodologies, individual exploits and tests, as well as hardening techniques. 
+
+## Linux
+
+### ExplainShell
+https://explainshell.com/
+Breaks down shell commands to see what each command and argument does. 
