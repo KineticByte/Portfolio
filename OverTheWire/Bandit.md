@@ -28,7 +28,7 @@ The password for the next level is stored in a file called spaces in this filena
 
 This level aims to teach people how to escape spaces - as running a command on a file with spaces in the name using the standard convention of just writing the file name will cause the shell to interpret each word as a new part of the command, as opposed to looking at the whole file name.
 There is one easy way around this, and one slightly more complicated method. 
-The easy method is to just surround this filename in quotation marks. `$cat "spaces in this filename"
+The easy method is to just surround this filename in quotation marks. `$cat "spaces in this filename"`
 The other method is to use the bash built-in escape character, which is a non-quoted backslash `\`
 Tab to autocomplete makes this easy as well - start by writing out the command then press tab to autocomplete `$ cat spaces\ in\ this\ filename`
 
